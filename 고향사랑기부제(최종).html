@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지방 소멸 위기 극복: 고향사랑 기부천사!</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 25px; font-size: 0.95rem; }
+        
+        /* 상단 네비게이션 인디케이터 */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            background: #e9ecef;
+            padding: 5px;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            gap: 5px;
+        }
+        .step-indicator .step-item { 
+            flex: 1;
+            text-align: center;
+            padding: 10px 5px; 
+            border-radius: 25px; 
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+        }
+        .step-indicator .step-item:hover { background: rgba(0,0,0,0.05); color: #333; }
+        .step-indicator .step-item.active { background: #3498db; color: white; }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        /* 상단 상태창 */
+        .user-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #eef2f7;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            border: 1px solid #d6e0ea;
+        }
+        .progress-container {
+            flex: 1;
+            margin: 0 20px;
+            background-color: #dadfe3;
+            border-radius: 10px;
+            position: relative;
+            height: 20px;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #f1c40f, #2ecc71);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: 1px;
+            font-size: 0.8rem;
+            color: #2c3e50;
+        }
+
+        /* 미션 퀴즈 박스 */
+        .mission-card {
+            background: #fdfefe;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .difficulty-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+            background-color: #3498db;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 14px 18px;
+            margin: 10px 0;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .option-btn:hover { background: #ebf5fb; border-color: #3498db; transform: scale(1.01); }
+        
+        /* 16개 지역 대시보드 그리드 (4*4 포맷 고정) */
+        .region-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+        @media(max-width: 768px) {
+            .region-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .region-card {
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: #fff;
+            border: 2px solid #cbd5e1;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+        .region-card:hover {
+            transform: translateY(-4px);
+            border-color: #3498db;
+            box-shadow: 0 6px 12px rgba(52,152,219,0.15);
+        }
+        .region-emoji { font-size: 2.2rem; margin-bottom: 5px; }
+
+        /* 스토리텔링 모달/상세창 */
+        .story-display-box {
+            background: #f8fafc;
+            border: 2px solid #3498db;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        .story-display-box.active { display: block; animation: fadeIn 0.3s ease; }
+
+        /* 기부 결제 폼 창 */
+        .donation-form-box {
+            background: #fff;
+            border: 2px solid #a5c7fe;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .form-row {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: center;
+            border-bottom: 1px solid #eef2f7;
+            padding-bottom: 12px;
+        }
+        .form-label {
+            width: 140px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .form-value {
+            flex: 1;
+            font-size: 1.05rem;
+        }
+        .name-input-field {
+            width: 200px;
+            padding: 8px 12px;
+            font-size: 1rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+        }
+        .name-input-field:focus {
+            border-color: #3498db;
+        }
+        .amount-input-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tax-notice-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 1px solid #bae6fd;
+        }
+        
+        /* 상점 레이아웃 */
+        .shop-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media(min-width: 768px) { .shop-layout { grid-template-columns: 1.4fr 0.6fr; } }
+        
+        .item-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .item-card {
+            border: 2px solid #dee2e6;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .item-card:hover { border-color: #2ecc71; background: #fbfcfc; }
+        
+        .item-emoji-large {
+            font-size: 2.5rem; 
+            margin-bottom: 8px;
+            background: #f2f4f4;
+            padding: 8px;
+            border-radius: 12px;
+            display: inline-block;
+            width: 55px;
+            height: 55px;
+            line-height: 55px;
+        }
+        
+        .cart-box {
+            background: #fff;
+            border: 2px dashed #bdc3c7;
+            padding: 15px;
+            border-radius: 10px;
+            align-self: start;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 8px 10px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+        }
+
+        /* 지역 경제 변화 시각화 영역 */
+        .ba-visual-container {
+            margin: 20px 0;
+            background: #fff;
+            border: 1px solid #d6e0ea;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .visual-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .visual-pane {
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        .pane-before { background: #fdf2e9; border: 2px solid #f5b041; }
+        .pane-after { background: #e8f8f5; border: 2px solid #2ecc71; }
+        
+        .pane-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
+        .graphic-display {
+            font-size: 2.8rem;
+            margin: 15px 0;
+            letter-spacing: 5px;
+            word-break: break-all;
+        }
+        .pane-desc { font-size: 0.9rem; line-height: 1.5; color: #566573; text-align: left; background: white; padding: 10px; border-radius: 6px;}
+
+        /* 사진 및 드로잉 영역 */
+        .photo-area-box { background: #f8f9fa; border: 1px dashed #ccc; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 15px; display: none; }
+        .photo-area-box.active { display: block; }
+        #camera-video { width: 100%; max-width: 240px; transform: rotateY(180deg); border-radius: 8px; }
+        #draw-canvas { background: #fff; border: 1px solid #333; cursor: crosshair; border-radius: 8px; }
+
+        /* 드로잉 커스텀 도구 스타일 */
+        .drawing-tools {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 10px 0;
+            background: #eee;
+            padding: 12px;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+        .tool-group { display: flex; align-items: center; gap: 5px; }
+        .color-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .color-dot.active { border-color: #333; transform: scale(1.1); }
+        .size-btn, .mode-btn { padding: 4px 10px; border: 1px solid #ccc; background: white; cursor: pointer; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
+        .size-btn.active, .mode-btn.active { background: #3498db; color: white; border-color: #3498db; }
+        .mode-btn.eraser.active { background: #e74c3c; color: white; border-color: #e74c3c; }
+
+        /* 📜 기부증서 양식 스타일 */
+        .official-certificate {
+            max-width: 650px;
+            margin: 30px auto;
+            background: #fffcf5;
+            border: 10px double #c5a059;
+            padding: 40px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            box-sizing: border-box;
+            background-image: radial-gradient(#fbf7ed 20%, transparent 20%), radial-gradient(#fbf7ed 20%, transparent 20%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+        .cert-top-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+        .cert-title-area {
+            flex: 1;
+        }
+        .cert-header {
+            text-align: left;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #4a3319;
+            letter-spacing: 4px;
+            margin-bottom: 5px;
+            font-family: 'Chosunilbo_myungjo', 'Georgia', serif;
+        }
+        .cert-subtitle {
+            text-align: left;
+            font-size: 0.85rem;
+            color: #8c765c;
+            letter-spacing: 1px;
+        }
+        .cert-user-photo-box {
+            width: 105px;
+            min-height: 105px;
+            height: auto;
+            background: #fff;
+            border: 2px solid #c5a059;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+        }
+        .cert-user-photo-box img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .cert-body {
+            font-size: 1.05rem;
+            line-height: 2;
+            color: #2b2b2b;
+            text-align: justify;
+            margin-bottom: 40px;
+            text-indent: 10px;
+        }
+        .cert-info-table {
+            width: 100%;
+            border-top: 2px solid #c5a059;
+            border-bottom: 2px solid #c5a059;
+            margin-bottom: 35px;
+            font-size: 0.95rem;
+        }
+        .cert-info-table td {
+            padding: 10px;
+            border-bottom: 1px dashed #e5dac1;
+        }
+        .cert-info-table td.lbl {
+            font-weight: bold;
+            color: #5a4a3a;
+            width: 30%;
+        }
+        .cert-date {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 35px;
+            letter-spacing: 2px;
+        }
+        .cert-authority-row {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #1a1a1a;
+            letter-spacing: 3px;
+            position: relative;
+            margin-top: 20px;
+        }
+        .official-red-seal {
+            position: absolute;
+            top: -12px;
+            right: 22%;
+            width: 50px;
+            height: 50px;
+            background: rgba(214, 40, 40, 0.15);
+            border: 3px solid #d62828;
+            color: #d62828;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            border-radius: 4px;
+        }
+
+        .btn {
+            display: block; width: 100%; padding: 12px; border: none; border-radius: 8px;
+            font-size: 1rem; cursor: pointer; font-weight: bold; margin-top: 10px; text-align: center;
+        }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-success { background: #2ecc71; color: white; }
+        .btn-success:hover { background: #27ae60; }
+        .btn-save { background: #e74c3c; color: white; font-size: 1.1rem; padding: 15px; margin-bottom: 15px; }
+        .btn-save:hover { background: #c0392b; }
+        .btn-back { background: #95a5a6; color: white; }
+
+        .audio-ctrl-btn {
+            background: #2c3e50; color: white; border: none; padding: 6px 12px; 
+            border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: bold;
+        }
+
+        .box { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #3498db; }
+        .btn-minus { background: #e74c3c; color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 커스텀 알림 모달 (alert 대체) */
+        #custom-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        #custom-modal-overlay.show {
+            display: flex;
+            animation: fadeIn 0.15s ease;
+        }
+        #custom-modal-box {
+            background: white;
+            border-radius: 14px;
+            padding: 28px 32px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            text-align: center;
+        }
+        #custom-modal-msg {
+            font-size: 1.05rem;
+            line-height: 1.65;
+            color: #2c3e50;
+            margin-bottom: 22px;
+            white-space: pre-line;
+        }
+        #custom-modal-ok {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 11px 36px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #custom-modal-ok:hover { background: #2980b9; }
+
+        /* 커스텀 confirm 모달 */
+        #custom-confirm-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        #custom-confirm-overlay.show {
+            display: flex;
+            animation: fadeIn 0.15s ease;
+        }
+        #custom-confirm-box {
+            background: white;
+            border-radius: 14px;
+            padding: 28px 32px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            text-align: center;
+        }
+        #custom-confirm-msg {
+            font-size: 1.05rem;
+            line-height: 1.65;
+            color: #2c3e50;
+            margin-bottom: 22px;
+            white-space: pre-line;
+        }
+        .confirm-btn-row { display: flex; gap: 12px; justify-content: center; }
+        #custom-confirm-yes {
+            background: #e74c3c; color: white; border: none;
+            padding: 11px 28px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
+        }
+        #custom-confirm-yes:hover { background: #c0392b; }
+        #custom-confirm-no {
+            background: #95a5a6; color: white; border: none;
+            padding: 11px 28px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
+        }
+        #custom-confirm-no:hover { background: #7f8c8d; }
+        /* 답례품 도감 스타일 */
+        .dex-section {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 30px;
+            color: white;
+            text-align: left;
+        }
+        .dex-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+            color: #f1c40f;
+            text-shadow: 0 0 10px rgba(241,196,15,0.5);
+        }
+        .dex-subtitle {
+            text-align: center;
+            font-size: 0.82rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+        .dex-region-label {
+            font-size: 0.78rem;
+            font-weight: bold;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 16px 0 8px 0;
+            padding-left: 4px;
+            border-left: 3px solid #3498db;
+            padding-left: 8px;
+        }
+        .dex-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        @media(max-width: 600px) { .dex-grid { grid-template-columns: repeat(3, 1fr); } }
+        .dex-card {
+            background: #16213e;
+            border: 2px solid #2d3a55;
+            border-radius: 10px;
+            padding: 10px 6px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .dex-card.obtained {
+            border-color: #f1c40f;
+            background: linear-gradient(145deg, #1e2d4a, #243355);
+            animation: dexPop 0.4s ease;
+        }
+        .dex-card.obtained:hover {
+            transform: translateY(-3px);
+            border-color: #ffd700;
+            box-shadow: 0 4px 15px rgba(241,196,15,0.3);
+        }
+        @keyframes dexPop {
+            0% { transform: scale(0.7); opacity: 0; }
+            70% { transform: scale(1.08); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .dex-card-emoji {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .dex-card.locked .dex-card-emoji {
+            filter: grayscale(1) brightness(0.3);
+        }
+        .dex-card-name {
+            font-size: 0.7rem;
+            color: #cbd5e1;
+            line-height: 1.2;
+            word-break: keep-all;
+        }
+        .dex-card.locked .dex-card-name {
+            color: #334155;
+        }
+        .dex-card-count {
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+        .dex-card-new {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.6rem;
+            font-weight: bold;
+            padding: 1px 5px;
+            border-radius: 8px;
+        }
+        .dex-lock-icon {
+            font-size: 1.1rem;
+            display: block;
+            color: #334155;
+            margin-bottom: 2px;
+        }
+        .dex-progress-bar-wrap {
+            background: #0f172a;
+            border-radius: 20px;
+            height: 12px;
+            margin: 14px 0 6px 0;
+            overflow: hidden;
+        }
+        .dex-progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f1c40f, #2ecc71);
+            border-radius: 20px;
+            transition: width 0.8s ease;
+        }
+        .dex-progress-text {
+            text-align: center;
+            font-size: 0.82rem;
+            color: #94a3b8;
+            margin-bottom: 16px;
+        }
+        .dex-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            justify-content: center;
+        }
+        .dex-tab {
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid #2d3a55;
+            background: #16213e;
+            color: #94a3b8;
+            transition: all 0.2s;
+        }
+        .dex-tab.active {
+            background: #f1c40f;
+            color: #1a1a2e;
+            border-color: #f1c40f;
+        }
+        .dex-panel { display: none; }
+        .dex-panel.active { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-size: 1.5rem; font-weight: bold; color: #2c3e50;">🎈 고향사랑 기부천사!</span>
+        <button class="audio-ctrl-btn" onclick="toggleBGM()">🎵 잔잔한 배경음 재생/정지</button>
+    </div>
+    <p class="subtitle">우리나라의 인구 균형 발전을 돕고 소멸 위기에 처한 지역을 구출하는 기부천사가 되어보세요!</p>
+
+    <div class="step-indicator">
+        <button class="step-item active" id="step1-indicator" onclick="goToSpecificStep(1)">1단계: 자금 모으기</button>
+        <button class="step-item" id="step2-indicator" onclick="goToSpecificStep(2)">2단계: 지역 어려움 탐색</button>
+        <button class="step-item" id="step3-indicator" onclick="goToSpecificStep(3)">3단계: 기부 결정</button>
+        <button class="step-item" id="step4-indicator" onclick="goToSpecificStep(4)">4단계: 답례품 & 증서</button>
+    </div>
+
+    <div class="user-status">
+        <div>💰 모은 자금: <span id="user-money" style="color:#e67e22; font-size:1.2rem;">0</span> 원</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="money-bar"></div>
+            <div class="progress-text" id="bar-text">목표 금액 0% 달성</div>
+        </div>
+        <div>👼 기부 횟수: <span id="saved-count">0</span>회</div>
+    </div>
+
+    <div id="screen-earn-money" class="screen active">
+        <div class="box" style="border-left-color: #f1c40f; background: #fefde8;">
+            🚨 <strong>[미션 목표]</strong> 소멸 위기 지역에 기부하기 위한 <strong>최소 자금 10만 원</strong>을 모아야 합니다! 상식 문제를 맞힐 때마다 2만 원씩 충전됩니다. <strong>총 5문제</strong>를 모두 맞히면 다음 단계로 자동 이동합니다.
+        </div>
+        <div class="mission-card">
+            <span class="difficulty-badge" id="paper-difficulty">미션 문제</span>
+            <h4 style="margin: 0 0 10px 0; color: #3498db;">📊 경제 및 인구 문제 챌린지</h4>
+            <p style="font-size: 1.1rem; font-weight: bold; line-height: 1.5; margin-bottom: 15px;" id="paper-question">문제를 구성하는 중입니다...</p>
+            <div id="paper-options"></div>
+        </div>
+    </div>
+
+    <div id="screen-select-region" class="screen">
+        <h3 style="color:#2c3e50;">🗺️ 2단계: 각 지역이 겪고 있는 어려움 살펴보기</h3>
+        <p style="font-size:0.9rem; color:#475569; background:#f1f5f9; padding:10px; border-radius:6px;">
+            💡 <strong>진행 방법:</strong> 아래 지자체 카드들을 하나씩 눌러 <strong>사회 교과서에서 배운 지역 균형 발전 문제</strong>를 살펴보세요. 확인 후 기부할 지역을 최종 선택할 수 있습니다.
+        </p>
+        
+        <div class="region-grid" id="region-list"></div>
+
+        <div id="story-display-box" class="story-display-box">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <span id="story-emoji" style="font-size:2rem;">📍</span>
+                <h4 id="story-region-name" style="margin:0; font-size:1.2rem; color:#1e3a8a;">지역 이름</h4>
+            </div>
+            <div style="background:white; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
+                <p style="font-weight:bold; color:#e11d48; margin-top:0;">⚠️ 이 지역이 처한 어려움 </p>
+                <p id="story-text" style="line-height:1.6; color:#334155; margin-bottom:0; text-align: justify;"></p>
+            </div>
+            <button class="btn btn-success" style="background:#3498db;" id="btn-confirm-choice" onclick="proceedToIntentWithSelected()">💝 이 고향의 어려움 해결을 위해 선택하기</button>
+        </div>
+        <button class="btn btn-back" style="margin-top:20px;" onclick="goToSpecificStep(1)">⬅️ 이전 화면으로 돌아가기 (자금 확인)</button>
+    </div>
+
+    <div id="screen-donate-intent" class="screen">
+        <h3 style="color:#2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 8px;">💳 3단계: 고향사랑 기부 기탁서 작성</h3>
+        <p>선택하신 지역에 보낼 기탁서 서류 내용과 실질적인 세제 혜택 안내를 꼼꼼히 확인해 보세요.</p>
+        
+        <div class="donation-form-box">
+            <div class="form-row">
+                <div class="form-label">기부 대상 지자체</div>
+                <div class="form-value" id="intent-region-name" style="font-weight: bold; color: #1e40af;">지역명</div>
+            </div>
+            <div class="form-row">
+                <div class="form-label">기부자 명의</div>
+                <div class="form-value">
+                    <input type="text" id="user-name-input" class="name-input-field" placeholder="이름을 입력해 주세요">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-label">보유 금고 잔액</div>
+                <div class="form-value" style="color: #e67e22; font-weight: bold;"><span id="intent-user-balance">0</span>원</div>
+            </div>
+            <div class="form-row" style="border-bottom: none;">
+                <div class="form-label">최종 기부 금액</div>
+                <div class="form-value">
+                    <div class="amount-input-box">
+                        <input type="text" id="donation-amount-input" value="100,000" readonly style="width: 140px; padding: 8px; font-size: 1.1rem; font-weight: bold; text-align: right; border: 2px solid #2563eb; border-radius: 6px; color:#2563eb; background-color: #f8fafc;"> 
+                        <span style="font-weight: bold; margin-right: 10px;">원</span>
+                        <span class="tax-notice-badge">✨ 100% 전액 세액공제 범위</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #475569; margin: 12px 0 0 0; line-height: 1.4;">💡 10만 원을 기부하면 연말정산 시 10만 원을 그대로 돌려받으므로 실질적인 본인 부담금은 0원입니다! 추가로 3만 원 상당의 지역 답례품 포인트까지 받게 됩니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-success" style="background:#2563eb;" onclick="confirmDonationIntent()">💝 최종 기부 결정 및 답례품 선택하기</button>
+        <button class="btn btn-back" onclick="goToSpecificStep(2)">⬅️ 이전 화면으로 돌아가기 (지역 다시 고르기)</button>
+    </div>
+
+    <div id="screen-shop-and-end" class="screen">
+        <h3 id="shop-region-title">🎁 4단계: 답례품 선택 및 인증 이미지 등록</h3>
+        <p>지역 발전에 힘써주신 보상으로 주민들이 기부액의 30%인 <strong>30,000 포인트(P)</strong> 상당의 이용권을 지급했습니다!</p>
+        
+        <div class="box" style="border-left-color: #2ecc71; font-weight: bold; background: #f4fbf7; display: flex; justify-content: space-between;">
+            <span>장바구니 잔고: <span id="selected-price" style="color:#2ecc71; font-size:1.2rem;">0</span> P / 30,000 P</span>
+            <span style="color: #e74c3c; font-size: 0.85rem;" id="cart-notice-msg">⚠️ 30,000 P를 정확히 모두 채워주셔야 증서 발급이 가능합니다.</span>
+        </div>
+
+        <div class="shop-layout" style="margin-bottom: 25px;">
+            <div class="item-list" id="shop-items"></div>
+            <div class="cart-box">
+                <h4 style="margin-top:0; margin-bottom:10px; color:#7f8c8d;">🛒 선택한 답례품 목록</h4>
+                <div id="cart-list-container"></div>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 25px 0;">
+
+        <h3>🖼️ 고향사랑 기부증서 사진 등록 센터</h3>
+        <p>발급될 정식 기부증서에 들어갈 사진을 실시간 카메라로 찍거나 화면에 직접 자유롭게 그려서 등록해 주세요.</p>
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button class="btn btn-primary" style="background:#8e44ad; margin-top:0;" onclick="selectPhotoMethod('camera')">📸 즉석 실시간 카메라 켜기</button>
+            <button class="btn btn-primary" style="background:#e67e22; margin-top:0;" onclick="selectPhotoMethod('draw')">🎨 손그림 디자인 도구 열기</button>
+        </div>
+
+        <div id="area-camera" class="photo-area-box">
+            <video id="camera-video" autoplay playsinline></video><br>
+            <button class="btn btn-primary" style="max-width:200px; margin:10px auto 0;" onclick="takeSnapshot()">📸 사진 촬영 셔터</button>
+        </div>
+
+        <div id="area-draw" class="photo-area-box">
+            <div class="drawing-tools">
+                <div class="tool-group">
+                    <strong>파스텔 색상: </strong>
+                    <div class="color-dot active" style="background:#ffb7b2;" onclick="changeColor('#ffb7b2', this)" title="살구"></div>
+                    <div class="color-dot" style="background:#ffdac1;" onclick="changeColor('#ffdac1', this)" title="밀크"></div>
+                    <div class="color-dot" style="background:#e2f0cb;" onclick="changeColor('#e2f0cb', this)" title="연두"></div>
+                    <div class="color-dot" style="background:#b5ead7;" onclick="changeColor('#b5ead7', this)" title="민트"></div>
+                    <div class="color-dot" style="background:#c7ceea;" onclick="changeColor('#c7ceea', this)" title="라벤더"></div>
+                    <div class="color-dot" style="background:#2c3e50;" onclick="changeColor('#2c3e50', this)" title="기본 다크"></div>
+                </div>
+                <div class="tool-group">
+                    <strong>도구선택: </strong>
+                    <button class="mode-btn active" id="draw-mode-btn" onclick="setDrawMode('draw')">✏️ 펜 그리기</button>
+                    <button class="mode-btn eraser" id="erase-mode-btn" onclick="setDrawMode('erase')">🧼 지우개</button>
+                    <button class="mode-btn" onclick="undoCanvas()">↩️ 실행취소</button>
+                </div>
+                <div class="tool-group">
+                    <strong>크기: </strong>
+                    <button class="size-btn" onclick="changeSize(2, this)">얇게</button>
+                    <button class="size-btn active" onclick="changeSize(5, this)">보통</button>
+                    <button class="size-btn" onclick="changeSize(12, this)">두껍게</button>
+                </div>
+            </div>
+            
+            <canvas id="draw-canvas" width="200" height="250"></canvas>
+            <div style="margin-top: 8px;">
+                <button class="btn btn-back" style="display:inline-block; width:auto; padding:5px 15px;" onclick="clearCanvas()">🧹 캔버스 리셋</button>
+                <button class="btn btn-primary" style="display:inline-block; width:auto; padding:5px 15px;" onclick="saveDraw()">🎨 드로잉 완성하기</button>
+            </div>
+        </div>
+
+        <div id="photo-preview-container" style="display:none; text-align:center; margin-top:15px; background:#eaf2f8; padding:15px; border-radius:10px;">
+            <h4 style="margin-top:0;">✅ 증서용 이미지 등록 완료</h4>
+            <div style="width:105px; height:135px; margin:0 auto; background:#fff; border:1px solid #ccc; overflow:hidden;" id="preview-crop-box"></div>
+            <button id="btn-retake-photo" class="btn btn-primary" style="display:none; max-width:200px; margin:10px auto 0; background:#8e44ad;" onclick="retakePhoto()">🔄 사진 다시 찍기</button>
+        </div>
+
+        <button class="btn btn-success" id="btn-submit-final" style="margin-top:25px; font-size:1.2rem; padding:15px;" onclick="completeDonationFlow()">🎉 최종 기부 증서 발급하기</button>
+        <button class="btn btn-back" style="margin-top:15px;" onclick="goToSpecificStep(3)">⬅️ 이전 화면으로 돌아가기 (기부금 다시 확인)</button>
+    </div>
+
+    <div id="screen-ending" class="screen">
+        <div style="text-align: center; padding: 10px 0;">
+            <div style="font-size: 4rem;">✨🏆✨</div>
+            <h2>훌륭합니다! 고향 수호 성공!</h2>
+            <p style="color: #555;">보내주신 소중한 자금이 메마르던 지역에 커다란 희망의 씨앗이 되었습니다.</p>
+            
+            <div class="ba-visual-container">
+                <h3 style="text-align:left; margin-top:0; color:#2c3e50; border-left: 4px solid #2ecc71; padding-left: 8px;">📊 한눈에 보는 지역의 변화 모습</h3>
+                <div class="visual-row">
+                    <div class="visual-pane pane-before">
+                        <div class="pane-title">기부하기 전 (위기 상황) 😢</div>
+                        <div class="graphic-display" id="gfx-before">🏚️❌📉</div>
+                        <div class="pane-desc" id="txt-before">내용</div>
+                    </div>
+                    <div class="visual-pane pane-after">
+                        <div class="pane-title">기부한 후 (살아난 마을) 🚀</div>
+                        <div class="graphic-display" id="gfx-after">🚑🚀🏡</div>
+                        <div class="pane-desc" id="txt-after">내용</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="official-certificate" id="print-certificate-target">
+                <div class="cert-top-wrapper">
+                    <div class="cert-title-area">
+                        <div class="cert-header">고향사랑 기부증서</div>
+                        <div class="cert-subtitle">HOMELAND LOVE DONATION CERTIFICATE</div>
+                    </div>
+                    <div class="cert-user-photo-box" id="cert-final-photo-area"></div>
+                </div>
+                
+                <table class="cert-info-table">
+                    <tr>
+                        <td class="lbl">기 부 자</td>
+                        <td id="cert-user-name" style="text-align:left; font-weight:bold;">-</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">기부 금액</td>
+                        <td style="text-align:left; color:#d62828; font-weight:bold;">금 100,000원 (일금 십만원 정)</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">기탁 지자체</td>
+                        <td id="cert-region-target" style="text-align:left; font-weight:bold;">-</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">선택 답례품</td>
+                        <td id="cert-gift-items" style="text-align:left; font-size:0.85rem; color:#555;">-</td>
+                    </tr>
+                </table>
+
+                <div class="cert-body">
+                    위 귀하는 평소 고향을 사랑하는 따뜻한 마음으로 소멸 위기 지역의 균형 발전과 주민 복리 증진을 위하여 고향사랑기부금을 기탁하였으므로, 이에 깊은 감사의 뜻을 담아 이 증서를 드립니다. 귀하의 소중한 기부금은 지역 공동체 활성화 사업에 투명하게 사용됩니다.
+                </div>
+
+                <div class="cert-date" id="cert-issue-date"></div>
+                
+                <div class="cert-authority-row">
+                    <span id="cert-official-title">지자체장</span>
+                    <div class="official-red-seal" id="cert-seal-text">인</div>
+                </div>
+            </div>
+
+            <button class="btn btn-save" onclick="downloadCertificateImage()">💾 기부증서 이미지 갤러리에 저장하기</button>
+
+            <div class="box" id="ending-message" style="border-left-color: #2ecc71; text-align: left; line-height: 1.6; margin-top: 20px;"></div>
+
+            <!-- 답례품 도감 -->
+            <div class="dex-section">
+                <div class="dex-title">🎴 고향 답례품 도감</div>
+                <div class="dex-subtitle">기부할 때마다 답례품이 도감에 등록됩니다. 전부 모아보세요!</div>
+
+                <div class="dex-tabs">
+                    <button class="dex-tab active" onclick="switchDexTab('this-run', this)">🎁 이번 기부</button>
+                    <button class="dex-tab" onclick="switchDexTab('all', this)">📖 전체 도감</button>
+                </div>
+
+                <div id="dex-panel-this-run" class="dex-panel active"></div>
+                <div id="dex-panel-all" class="dex-panel"></div>
+            </div>
+
+            <button class="btn btn-primary" style="background:#34495e; margin-top: 20px;" onclick="restartToGameInit()">🔄 다른 고향 구하러 가기 (새로운 자금 마련하기)</button>
+        </div>
+    </div>
+</div>
+
+<!-- 커스텀 알림 모달 -->
+<div id="custom-modal-overlay">
+    <div id="custom-modal-box">
+        <div id="custom-modal-msg"></div>
+        <button id="custom-modal-ok">확인</button>
+    </div>
+</div>
+
+<!-- 커스텀 확인 모달 -->
+<div id="custom-confirm-overlay">
+    <div id="custom-confirm-box">
+        <div id="custom-confirm-msg"></div>
+        <div class="confirm-btn-row">
+            <button id="custom-confirm-yes">확인</button>
+            <button id="custom-confirm-no">취소</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let audioCtx = null;
+let bgmTimer = null;
+let isBGMPlaying = false;
+let bgmStep = 0;
+
+/* ── 커스텀 알림/확인 함수 (alert/confirm 대체 → BGM 보존) ── */
+function showAlert(msg, callback) {
+    const overlay = document.getElementById('custom-modal-overlay');
+    document.getElementById('custom-modal-msg').innerHTML = msg;
+    overlay.classList.add('show');
+    const okBtn = document.getElementById('custom-modal-ok');
+    const handler = () => {
+        overlay.classList.remove('show');
+        okBtn.removeEventListener('click', handler);
+        // AudioContext가 suspended 상태면 즉시 복구
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => {
+                if (isBGMPlaying) playBgmNote();
+            });
+        }
+        if (callback) callback();
+    };
+    okBtn.addEventListener('click', handler);
+}
+
+function showConfirm(msg, onYes, onNo) {
+    const overlay = document.getElementById('custom-confirm-overlay');
+    document.getElementById('custom-confirm-msg').innerHTML = msg;
+    overlay.classList.add('show');
+    const yesBtn = document.getElementById('custom-confirm-yes');
+    const noBtn  = document.getElementById('custom-confirm-no');
+    const cleanup = () => {
+        overlay.classList.remove('show');
+        yesBtn.removeEventListener('click', yesHandler);
+        noBtn.removeEventListener('click', noHandler);
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => {
+                if (isBGMPlaying) playBgmNote();
+            });
+        }
+    };
+    const yesHandler = () => { cleanup(); if (onYes) onYes(); };
+    const noHandler  = () => { cleanup(); if (onNo)  onNo(); };
+    yesBtn.addEventListener('click', yesHandler);
+    noBtn.addEventListener('click', noHandler);
+}
+
+const bgmChords = [
+    [261.63, 329.63, 392.00, 523.25], 
+    [220.00, 261.63, 329.63, 440.00], 
+    [293.66, 349.23, 440.00, 587.33], 
+    [196.00, 246.94, 293.66, 392.00]  
+];
+
+function initAudio() {
+    try {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    } catch (e) {
+        console.log("AudioContext 초기화 실패:", e);
+    }
+}
+
+function playSound(type) {
+    initAudio();
+    if (!audioCtx || audioCtx.state === 'suspended') return;
+    
+    try {
+        let now = audioCtx.currentTime;
+        let osc = audioCtx.createOscillator();
+        let gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        if (type === 'correct') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.1);
+            osc.frequency.setValueAtTime(783.99, now + 0.2);
+            gainNode.gain.setValueAtTime(0.2, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.start(now); osc.stop(now + 0.4);
+        } else if (type === 'wrong') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.linearRampToValueAtTime(120, now + 0.25);
+            gainNode.gain.setValueAtTime(0.15, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+            osc.start(now); osc.stop(now + 0.25);
+        } else if (type === 'click') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(450, now);
+            gainNode.gain.setValueAtTime(0.08, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            osc.start(now); osc.stop(now + 0.05);
+        } else if (type === 'success') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(587.33, now + 0.1);
+            osc.frequency.setValueAtTime(659.25, now + 0.2);
+            osc.frequency.setValueAtTime(880.00, now + 0.3);
+            gainNode.gain.setValueAtTime(0.2, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+            osc.start(now); osc.stop(now + 0.6);
+        }
+    } catch (e) {
+        console.log("효과음 재생 실패 (무시하고 진행):", e);
+    }
+}
+
+function playBgmNote() {
+    if (!isBGMPlaying || !audioCtx || audioCtx.state === 'suspended') return;
+    try {
+        let chord = bgmChords[Math.floor(bgmStep / 4) % bgmChords.length];
+        let note = chord[bgmStep % chord.length];
+        let osc = audioCtx.createOscillator();
+        let gainNode = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(note, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+        bgmStep++;
+    } catch (e) {
+        console.log("BGM 멜로디 생성 실패:", e);
+    }
+    bgmTimer = setTimeout(playBgmNote, 400);
+}
+
+function toggleBGM() {
+    initAudio();
+    if (isBGMPlaying) {
+        isBGMPlaying = false;
+        clearTimeout(bgmTimer);
+    } else {
+        isBGMPlaying = true;
+        bgmStep = 0;
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => { playBgmNote(); });
+        } else {
+            playBgmNote();
+        }
+    }
+}
+
+function ensureBGMStarts() {
+    try {
+        initAudio();
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(e => console.log(e));
+        }
+        if (!isBGMPlaying) {
+            isBGMPlaying = true;
+            bgmStep = 0;
+            playBgmNote();
+        }
+    } catch (e) {
+        console.log("자동 오디오 시작 제한 발생 (게임진행은 계속 가능):", e);
+    }
+}
+
+// 총 14문제 시험 풀
+const schoolExamPool = [
+    { q: "태어나고 자란 고향이나 응원하고 싶은 지자체에 기부하여 균형 발전을 돕는 제도는?", options: ["① 고향사랑기부제", "② 이웃돕기성금", "③ 지방세금납부"], answer: 0, cash: 20000 },
+    { q: "고향사랑기부금을 낸 감사의 보상으로 지자체가 선물하는 지역 특산품의 명칭은?", options: ["① 답례품", "② 사은품", "③ 참가상품"], answer: 0, cash: 20000 },
+    { q: "고향사랑기부제는 개인이 기부할 때 몇만 원까지 100% 전액 세액공제를 받을 수 있나요?", options: ["① 5만 원", "② 10만 원", "③ 50만 원"], answer: 1, cash: 20000 },
+    { q: "기부자가 받는 답례품의 가치는 본인이 기부한 금액의 최대 몇 %까지 인정될까요?", options: ["① 10%", "② 30%", "③ 50%"], answer: 1, cash: 20000 },
+    { q: "고향사랑기부제로 모인 기부금은 다음 중 어디에 사용되어야 할까요?", options: ["① 고층 빌딩 건설", "② 지역 주민 복지 및 공동체 활성화", "③ 대기업 공장 설립 지원"], answer: 1, cash: 20000 },
+    { q: "인구가 줄어들어 지방자치단체가 아예 사라질 위기에 처한 현상을 뜻하는 사회 용어는?", options: ["① 지방 소멸 위험", "② 신도시 개발", "③ 인구 집중 현상"], answer: 0, cash: 20000 },
+    { q: "전체 인구 중에서 노인의 비율이 아주 높고 아동이 적은 농촌 사회의 특징은?", options: ["① 고령화 사회", "② 다문화 사회", "③ 정보화 사회"], answer: 0, cash: 20000 },
+    { q: "지역 주민들이 살아가기 위해 꼭 필요한 병원, 도로, 소방서 같은 편의 시설을 뜻하는 말은?", options: ["① 생활 인프라", "② 엔터테인먼트", "③ 민간 기업"], answer: 0, cash: 20000 },
+    { q: "청년들이 일자리를 찾아 수도권 대도시로 떠나면서 농촌의 인구가 줄어드는 현상은?", options: ["① 인구 유출", "② 인구 유입", "③ 귀농귀촌"], answer: 0, cash: 20000 },
+    { q: "농촌과 도시가 골고루 잘 살 수 있도록 국가에서 추진하는 균형 발전 사업의 목표는?", options: ["① 지역 균형 발전", "② 수도권 집중 개발", "③ 해외 이민 장려"], answer: 0, cash: 20000 },
+    { q: "한 나라나 지역에 사는 사람의 총수로, 사회를 구성하는 가장 기본적인 요소는?", options: ["① 인구", "② 가구", "③ 민족"], answer: 0, cash: 20000 },
+    { q: "일정 면적(1㎢) 안에 살고 있는 사람의 밀집 수준을 나타내는 지표는?", options: ["① 인구 밀도", "② 인구 증가율", "③ 평균 수명"], answer: 0, cash: 20000 },
+    { q: "산업화 시기, 농촌 인구가 일자리를 찾아 도시로 대거 이동한 현상은?", options: ["① 이촌향도", "② 도시재생", "③ 귀농귀촌"], answer: 0, cash: 20000 },
+    { q: "인구, 대기업, 주요 대학이 과도하게 집중되어 지방 소멸을 유발하는 서울·경기·인천 지역은?", options: ["① 수도권", "② 영남권", "③ 호남권"], answer: 0, cash: 20000 }
+];
+
+let activeQuestions = [];
+
+// 누적 답례품 도감: { "regionKey_itemIndex": count }
+let dexCollection = {};
+
+const regionData = {
+    shinan: {
+        name: "전남 신안군", emoji: "🏝️", gfxB: "🎒❌📉", gfxA: "🚌🚀🏡", project: "낙도지역 아동 야간 방과후 연계 안전 돌봄 버스 및 교육 인프라 조성",
+        story: "신안군은 수많은 섬으로 이루어진 지자체로, 학교 수가 매우 적어 학생들이 배를 타고 먼 길을 통학해야 하는 열악한 교육 환경에 처해 있습니다. 학원이나 문화 센터 같은 기초 교육 시설이 부족하여 '교육적 불평등 및 격차'가 크게 일어나는 지역입니다. 섬 내부에는 고등학교나 전문 학원 등 심화 교육 시설이 부족하여, 학생들이 중·고등학교 진학 시기가 되면 교육 인프라가 갖춰진 육지의 대도시로 가족 전체가 유학이나 이주를 선택하여 소아·청소년 인구 소멸이 가속화됩니다.",
+        items: [
+            {name:"신안 천일염 선물세트", p:10000, i:"🧂"}, {name:"신안 섬들녘 명품 명란김", p:20000, i:"🍙"}, {name:"신안 비금도 섬초 시금치", p:10000, i:"🌿"}, {name:"흑산도 홍어 명품 팩", p:30000, i:"🐟"},
+            {name:"신안 청정 반건조 민어", p:30000, i:"🐟"}, {name:"임자도 전장김 세트", p:5000, i:"📦"}, {name:"신안 함초 침출 액체소금", p:15000, i:"🍶"}, {name:"신안 새우젓 옹기 항아리", p:25000, i:"🏺"}
+        ]
+    },
+    goheung: {
+        name: "전남 고흥군", emoji: "🍯", gfxB: "👴❌📉", gfxA: "🚑🚀🏡", project: "시골 마을 독거 어르신 응급 의료 호출 인공지능 돌봄 장비 구축 및 전담 간호사 지원",
+        story: "고흥군은 전체 주민 중 노인의 비율이 매우 높은 '초고령 사회'의 대표적인 지역입니다. 농어촌 인구 감소로 청장년층은 줄어들고 홀로 사시는 노인 가구가 급증하고 있습니다. 노인들을 위한 복지 시설과 의료 인프라가 부족하여 고독사나 건강 관리 사각지대 등 심각한 고령화 사회 문제를 겪고 있습니다.",
+        items: [
+            {name:"고흥 명품 유자청 세트", p:30000, i:"🍯"}, {name:"고흥 웰빙 석류 진액", p:20000, i:"🍷"}, {name:"고흥 지주식 햇김", p:10000, i:"🍙"}, {name:"유자 수제 비누 세트", p:5000, i:"🧼"},
+            {name:"고흥 미역귀 환 세트", p:15000, i:"💊"}, {name:"고흥 명품 생선구이 모둠", p:25000, i:"🐟"}, {name:"고흥 유자 샌드 쿠키", p:10000, i:"🍪"}, {name:"고흥 청정 나물 건조팩", p:5000, i:"🌿"}
+        ]
+    },
+    haenam: {
+        name: "전남 해남군", emoji: "🍠", gfxB: "👶❌📉", gfxA: "🧑‍🍼🚀🏡", project: "공공 산후조리원 이용 보조금 및 시골 영유아 전용 이동식 장난감 도서관 지원",
+        story: "땅끝 마을로 유명한 해남군은 아기가 새로 태어나는 비율인 '출생률'이 낮아져 고충을 겪는 저출생 지역입니다. 농촌 지역이다 보니 영유아를 키우는 데 필수적인 소아청소년과 병원이나 산후조리원 같은 보육 인프라가 턱없이 부족하여, 아기 양육에 어려움을 겪는 젊은 부모들이 교육과 양육을 위해 대도시로 이주하는 현상이 이어지고 있습니다.",
+        items: [
+            {name:"해남 황토 꿀고구마 5kg", p:20000, i:"🍠"}, {name:"해남 땅끝 프리미엄 쌀", p:30000, i:"🌾"}, {name:"해남 화원 농협 김치 팩", p:10000, i:"🥬"}, {name:"해남 구운 고구마 말랭이", p:5000, i:"🍠"},
+            {name:"해남 청정 자반김 세트", p:10000, i:"🍙"}, {name:"해남 전통 수제 한과상자", p:25000, i:"📦"}, {name:"해남 무농약 아이보리 보리", p:15000, i:"🌾"}, {name:"해남 참기름 들기름 세트", p:20000, i:"🍶"}
+        ]
+    },
+    ulleung: {
+        name: "경북 울릉군", emoji: "🦑", gfxB: "🎒❌📉", gfxA: "🚢🚀🏡", project: "도서지역 청소년 원격 대면 스마트 스터디 룸 활성화 및 문화 교류 캠프 운영",
+        story: "울릉도는 동해에 홀로 떨어진 섬 지자체로서 지리적 격차로 인해 교육, 의료, 문화 인프라가 턱없이 부족하여 '교육적 불평등 및 격차'가 크게 일어나는 지역입니다. 섬 내부에는 고등학교나 전문 학원 등 심화 교육 시설이 부족하여, 학생들이 중·고등학교 진학 시기가 되면 교육 인프라가 갖춰진 육지의 대도시로 가족 전체가 유학이나 이주를 선택하여 소아·청소년 인구 소멸이 가속화됩니다.",
+        items: [
+            {name:"울릉도 독도 명품 오징어", p:30000, i:"🦑"}, {name:"울릉도 명이나물 절임통", p:20000, i:"🌿"}, {name:"울릉 청정 호박엿 세트", p:10000, i:"🍬"}, {name:"울릉도 건조 부지깽깽이나물", p:5000, i:"🌿"},
+            {name:"울릉 호박 젤리 기프트백", p:5000, i:"🍮"}, {name:"울릉 해양심층수 생수팩", p:10000, i:"🍼"}, {name:"울릉도 눈개승마 나물팩", p:15000, i:"🌱"}, {name:"울릉 청정 엉겅퀴 해장국", p:20000, i:"🥣"}
+        ]
+    },
+    hoengseong: {
+        name: "강원 횡성군", emoji: "🐂", gfxB: "🏚️❌📉", gfxA: "🚨🚀🏡", project: "친환경 한우 축산 스마트 친환경 정화 시설 및 농촌 청년 가업 승계 펀드 구축",
+        story: "횡성군은 전통 축산업인 '횡성한우'의 본고장입니다. 그러나 농촌 인구의 감소와 고령화로 인해 축산업을 이어받아 경영할 젊은 후계 인력이 턱없이 부족한 상황입니다. 청년들이 가업을 물려받지 않고 떠나면서 오랜 전통 농가가 폐업하고, 빈 농가가 증가하여 농촌 경제가 위축되는 공동화 현상을 겪고 있습니다.",
+        items: [
+            {name:"횡성 한우 구이 세트", p:30000, i:"🥩"}, {name:"횡성 안흥찐빵 한상자", p:10000, i:"🥟"}, {name:"횡성 더덕 명품 진액 세트", p:20000, i:"🍯"}, {name:"횡성 웰빙 무말랭이팩", p:5000, i:"🌿"},
+            {name:"횡성 전통 쌀조청 청", p:15000, i:"🍯"}, {name:"횡성 한우 볶음고추장", p:10000, i:"🥫"}, {name:"횡성 벌꿀 화분 세트", p:25000, i:"🍯"}, {name:"횡성 잡곡 들깨가루 패키지", p:15000, i:"🌱"}
+        ]
+    },
+    jeongseon: {
+        name: "강원 정선군", emoji: "⛰️", gfxB: "🏥❌📉", gfxA: "搶🚀🏡", project: "산간 오지 야간 24시간 스마트 원격 안심 진료소 및 닥터 정선 구급 버스 운행",
+        story: "정선군은 험준한 산악 지대에 위치하여 이웃 마을이나 병원에 한 번 가려면 수많은 고개를 넘어야 하는 지리적 소외 지역입니다. 대형 종합병원이나 응급실이 주변에 없어, 야간이나 주말에 긴급 환자가 발생하면 생명이 위험해지는 '의료 인프라 붕괴' 문제를 극복하고자 애쓰고 있습니다.",
+        items: [
+            {name:"정선 곤드레나물 건조팩", p:10000, i:"🌿"}, {name:"정선 명품 수리취떡 세트", p:20000, i:"🍡"}, {name:"정선 황기 가공 진액 진", p:30000, i:"🍶"}, {name:"정선 산양삼 비누 세트", p:5000, i:"🧼"},
+            {name:"정선 도라지 조청 청", p:15000, i:"🍯"}, {name:"정선 청정 더덕 장아찌", p:15000, i:"🌿"}, {name:"정선 옥수수 퐁 과자백", p:5000, i:"🍿"}, {name:"정선 메밀 부침가루 키트", p:10000, i:"🌾"}
+        ]
+    },
+    goesan: {
+        name: "충북 괴산군", emoji: "🌽", gfxB: "👨‍🌾❌📉", gfxA: "🚜🚀🏡", project: "청년 창농 인큐베이팅 스마트 빌리지 구축 및 농번기 공동 아이 돌봄방 운영",
+        story: "괴산군은 전형적인 농촌 지역으로, 일할 사람이 부족한 '농촌 일자리 부족' 현상에 직면해 있습니다. 주민 대부분이 고령이라 농작물을 수확할 수 있는 젊은 노동력이 부족하여, 우수한 친환경 유기농 농산물을 제때 생산하고 공급하는 지역 일자리 체계가 불안정해지고 있습니다.",
+        items: [
+            {name:"괴산 대학찰옥수수 팩", p:10000, i:"🌽"}, {name:"괴산 태양초 고춧가루세트", p:30000, i:"🌶️"}, {name:"괴산 토종 자연산 감말랭이", p:20000, i:"🍊"}, {name:"괴산 표고버섯 슬라이스", p:5000, i:"🍄"},
+            {name:"괴산 청결 참기름 병", p:25000, i:"🍶"}, {name:"괴산 사과 생즙 주스박스", p:15000, i:"🍹"}, {name:"괴산 명품 찰토마토 한상자", p:20000, i:"🍅"}, {name:"괴산 절임배추 김장 세트", p:30000, i:"🥬"}
+        ]
+    },
+    buyeo: {
+        name: "충남 부여군", emoji: "🌰", gfxB: "🎨❌📉", gfxA: "✨🚀🏡", project: "백제 유적지 연계 야간 미디어아트 축제 활성화 및 청년 예술인 마을 조성",
+        story: "부여군은 백제의 찬란한 역사적 유적을 보유한 '역사·문화 관광 도시'입니다. 하지만 대도시에 비해 상업 활동 인프라가 약해 관광객들이 낮에만 잠깐 머물고 밤에는 대도시 숙소로 이동해 버립니다. 이로 인해 밤이 되면 상점들이 문을 닫고 경제 활동이 멈추는 야간 공동화 및 상권 침체 문제를 해결해야 합니다.",
+        items: [
+            {name:"부여 굿뜨래 명품 밤 세트", p:10000, i:"🌰"}, {name:"부여 굿뜨래 멜론 한상자", p:30000, i:"🍈"}, {name:"부여 굿뜨래 표고버섯팩", p:20000, i:"🍄"}, {name:"부여 찰토마토 주스 팩", p:5000, i:"🍅"},
+            {name:"부여 굿뜨래 고품격 수박", p:25000, i:"🍉"}, {name:"부여 서동 연꽃빵 과자", p:10000, i:"🥮"}, {name:"부여 왕송 버섯 스낵", p:5000, i:"🍄"}, {name:"부여 청정 햅쌀 4kg", p:15000, i:"🌾"}
+        ]
+    },
+    cheongyang: {
+        name: "충남 청양군", emoji: "🌶️", gfxB: "¼🏚️❌📉", gfxA: "✨🚀🏡", project: "시골 빈집 리모델링 청년 귀농 하우스 지원 및 농촌 공유 오피스 센터 건립",
+        story: "청양군은 주민들이 도시로 직장을 찾아 떠나며 사람이 살지 않는 '빈집 급증' 문제를 안고 있습니다. 오랫동안 방치된 시골 빈집들이 허물어지면서 마을 경관을 해치고 치안상 위험을 초래하고 있으며, 남은 주민들의 정주 의욕마저 떨어뜨려 청년들이 머물기 좋은 환경을 마련해야 하는 현안을 해결해야 합니다.",
+        items: [
+            {name:"청양 명품 건고추 고춧가루", p:30000, i:"🌶️"}, {name:"청양 명물 구기자 가공 차", p:20000, i:"☕"}, {name:"청양산 표고버섯 슬라이스", p:10000, i:"🍄"}, {name:"청양 구기자 수제 한과", p:5000, i:"🍡"},
+            {name:"청양 매콤 한우 볶음고추장", p:15000, i:"🥫"}, {name:"청양 청정 밤 선물세트", p:10000, i:"🌰"}, {name:"청양 명품 참기름 들기름", p:25000, i:"🍶"}, {name:"청양 무농약 찰토마토 즙", p:5000, i:"🍹"}
+        ]
+    },
+    imsil: {
+        name: "전북 임실군", emoji: "🧀", gfxB: "🎒❌📉", gfxA: "🚌🚀🏡", project: "농촌 유학 가정 정착 지원을 위한 웰컴 임실 패밀리 하우스 조성 사업",
+        story: "임실군은 청소년과 학생들이 지속해서 감소하여 '학교 통폐합 문제'에 직면한 지자체입니다. 면 단위의 작은 마을 초등학교들이 전교생 부족으로 문을 닫게 될 처지에 놓이면서 지역 교육 공동체가 붕괴될 위기입니다. 도시 학생들이 농촌 생활을 체험하러 유학을 올 수 있도록 주거 환경 보완에 힘쓰고 있습니다.",
+        items: [
+            {name:"임실 수제 치즈 세트", p:30000, i:"🧀"}, {name:"임실 구워먹는치즈 요거트", p:20000, i:"🥛"}, {name:"임실 고추장 전통 항아리", p:10000, i:"🏺"}, {name:"임실 치즈 돈가스 밀키트", p:5000, i:"🥩"},
+            {name:"임실 치즈 스트링 스틱세트", p:15000, i:"🧀"}, {name:"임실 유기농 가공 매실원액", p:10000, i:"🍶"}, {name:"임실 청정 잡곡 햅쌀 혼합", p:25000, i:"🌾"}, {name:"임실 수제 감식초 선물세트", p:15000, i:"🍶"}
+        ]
+    },
+    yeongdeok: {
+        name: "경북 영덕군", emoji: "🦀", gfxB: "📉❌🏚️", gfxA: "🚨🚀🏡", project: "영덕 블루로드 오지 어촌계 노인 공동 요양 및 긴급 헬스 안심 쉼터",
+        story: "영덕군은 젊은이들이 일자리를 찾아 대도시로 영구 이주하는 '이촌향도 현상'의 누적으로 생산 연령 인구가 고갈되는 청년 부족 현상을 겪고 있습니다. 어촌 마을의 상권과 수산 가공 공장에 일할 청년 노동자가 없어 전통 어업이 침체하고 공장들이 휴업하여 경제 기반 자체가 무너지는 소멸 위기에 직면했습니다.",
+        items: [
+            {name:"영덕 명품 영덕대게 자반", p:30000, i:"🦀"}, {name:"영덕 대게간장 요리소스", p:10000, i:"🍶"}, {name:"영덕 청정 해풍 건조 오징어", p:20000, i:"🦑"}, {name:"영덕 영양 웰빙 사과칩", p:5000, i:"🍎"},
+            {name:"영덕 명품 대게살 가공캔", p:20000, i:"🥫"}, {name:"영덕 해풍 미역 선물팩", p:10000, i:"🌊"}, {name:"영덕 복숭아 통조림 세트", p:15000, i:"🍑"}, {name:"영덕 청정 돌김 한박스", p:10000, i:"🍙"}
+        ]
+    },
+    uiseong: {
+        name: "경북 의성군", emoji: "🧄", gfxB: "📉❌🏚️", gfxA: "🚜🚀🏡", project: "청년 창업 및 가자 의성 메이커스 농촌 청년 공유 경제 네트워크 지원",
+        story: "의성군은 전국에서 인구 소멸 위험 지수가 가장 높은 곳 중 하나로 꼽힙니다. 청년들이 머물 수 있는 IT, 디자인, 문화 관련 첨단 '청년 선호 직업 및 기업 부재'로 인해 일자리가 부족합니다. 대다수 경제 활동이 전통 마늘 농업에 한정되어 다양한 전공을 가진 청년들이 대학 졸업 후 대도시로 전부 떠나는 고충이 깊습니다.",
+        items: [
+            {name:"의성 명품 토종 한지마늘", p:20000, i:"🧄"}, {name:"의성 흑마늘 농축 진액", p:30000, i:"🍯"}, {name:"의성 청정 명품 사과상자", p:20000, i:"🍎"}, {name:"의성 청결 고춧가루 파우치", p:10000, i:"🌶️"},
+            {name:"의성 마늘 돼지 육포 세트", p:15000, i:"🥩"}, {name:"의성 자두 찰빵 디저트백", p:10000, i:"🥮"}, {name:"의성 청정 들기름 한병", p:15000, i:"🍶"}, {name:"의성 마늘 수제 비누세트", p:5000, i:"🧼"}
+        ]
+    },
+    namhae: {
+        name: "경남 남해군", emoji: "🐟", gfxB: "📉❌🏚️", gfxA: "✨🚀🏡", project: "보물섬 남해 독일마을 연계 청년 로컬 크리에이터 창업 정착 자금 지원",
+        story: "남해군은 아름다운 바다 관광 자원을 가졌지만, 교통이 불편하고 청년들이 정착할 문화 오피스나 상설 일자리가 없어 '청년 유출 및 경제 침체'를 겪고 있습니다. 청년들이 주로 즐기는 인프라가 대도시에 밀집해 있다 보니, 정착 여건이 부족하여 고향을 떠난 청년들의 공백으로 고령화 비율이 지속해서 올라가는 위기를 극복하고자 합니다.",
+        items: [
+            {name:"남해 보물섬 마늘 세트", p:20000, i:"🧄"}, {name:"남해 청정 죽방멸치 특선", p:30000, i:"🐟"}, {name:"남해 명품 유자 빵 세트", p:10000, i:"🥮"}, {name:"남해 바다 청정 돌미역 팩", p:5000, i:"🌊"},
+            {name:"남해 멸치액젓 요리 소스", p:10000, i:"🍶"}, {name:"남해 흑마늘 진액 파우치", p:25000, i:"🧪"}, {name:"남해 청정 고사리 건조팩", p:15000, i:"🌿"}, {name:"남해 수제 독일식 수제소시지", p:20000, i:"🌭"}
+        ]
+    },
+    sancheong: {
+        name: "경남 산청군", emoji: "🪵", gfxB: "🌿❌📉", gfxA: "✨🚀🏡", project: "지리산 산청 동의보감촌 연계 웰니스 한방 바이오 치유 프로그램 육성",
+        story: "지리산 자락의 산청군은 역사적으로 유명한 '전통 한방 약초의 고장'입니다. 하지만 약초를 재배하고 연구하는 전문 농민들의 연령대가 높아지면서 전통 한방 제법이나 제조 기술이 전수되지 못하고 대가 끊길 위기에 놓여 있습니다. 지속 가능한 향토 산업 경쟁력을 갖추기 위해 청년 연구원 교육이 필요합니다.",
+        items: [
+            {name:"산청 지리산 6년근 홍삼정", p:30000, i:"🪵"}, {name:"산청 프리미엄 지리산 벌꿀", p:20000, i:"🍯"}, {name:"산청 명품 고종시 곶감상자", p:10000, i:"🍊"}, {name:"산청 한방 뽕잎차 세트", p:5000, i:"☕"},
+            {name:"산청 한방 상황버섯 달임액", p:25000, i:"🧪"}, {name:"산청 유기농 쌀 5kg 상자", p:15000, i:"🌾"}, {name:"산청 홍화씨 분말 영양세트", p:10000, i:"💊"}, {name:"산청 청정 산나물 장아찌", p:15000, i:"🌿"}
+        ]
+    },
+    muju: {
+        name: "전북 무주군", emoji: "🍇", gfxB: "📉❌🏚️", gfxA: "✨🚀🏡", project: "반딧불이 생태 보존 구역 연계 친환경 반도 패밀리 캠핑 빌리지 및 로컬 관광 활성화",
+        story: "무주군은 수려한 자연환경을 지니고 있으나 상업 및 문화 시설이 취약해 청년 인구가 급격히 빠져나가고 있습니다. 특히 겨울철 스키 시즌 외에는 관광객의 발길이 줄어 지역 소상공인들이 상권 유지에 커다란 경제적 어려움을 호소하고 있습니다.",
+        items: [
+            {name:"무주 반딧불 머루와인", p:25000, i:"🍷"}, {name:"무주 청정 호두 세트", p:15000, i:"🥜"}, {name:"무주 산골 아로니아 즙", p:10000, i:"🍹"}, {name:"무주 천마 농축 진액", p:30000, i:"🍯"},
+            {name:"무주 청정 고산지 사과", p:20000, i:"🍎"}, {name:"무주 무농약 건표고버섯", p:10000, i:"🍄"}, {name:"무주 벌꿀 허니 콤", p:20000, i:"🍯"}, {name:"무주 머루 젤리 디저트", p:5000, i:"🍮"}
+        ]
+    },
+    gurye: {
+        name: "전남 구례군", emoji: "⛰️", gfxB: "📉❌🏚️", gfxA: "🚜🚀🏡", project: "지리산 야생화 치유 생태 정원 조성 및 귀농·귀촌 청년 정착 보조 연계 펀드 구축",
+        story: "구례군은 수려한 지리산과 섬진강을 안고 있는 청정 고장이나, 인구 유출과 극심한 고령화로 인해 생산 경제 인구가 고갈되는 어려움에 처해 있습니다. 청년들이 정착할 일자리와 인프라가 부족하여 시골 마을 곳곳이 무너져 내리는 소멸 최고 위험군을 극복하기 위해 노력하고 있습니다.",
+        items: [
+            {name:"구례 명품 산수유 진액", p:30000, i:"🍒"}, {name:"지리산 구례 토종 벌꿀", p:20000, i:"🍯"}, {name:"구례 청정 건나물 세트", p:10000, i:"🌿"}, {name:"구례 전통 김부각 선물세트", p:15000, i:"🍘"},
+            {name:"구례 지리산 화엄사 차세트", p:20000, i:"☕"}, {name:"구례 지리산 대봉곶감", p:15000, i:"🍊"}, {name:"구례 농협 햅쌀 4kg", p:10000, i:"🌾"}, {name:"구례 수제 산수유 비누", p:5000, i:"🧼"}
+        ]
+    }
+};
+
+let userMoney = 0;
+let savedCount = 0;
+let currentExamIndex = 0;
+let currentRegionKey = "";
+let cart = {};
+let totalSpentPoints = 0;
+
+let canvas = null;
+let ctx = null;
+let isDrawing = false;
+let currentPenColor = '#ffb7b2'; 
+let currentPenSize = 5;
+let drawingMode = 'draw'; 
+let canvasHistory = []; 
+let userFinalPhotoData = null;
+
+window.onload = function() {
+    updateStatusUI();
+    generateRandomExamSet(); 
+    loadExamQuestion();
+    initCanvas();
+};
+
+function generateRandomExamSet() {
+    let shuffled = [...schoolExamPool].sort(() => 0.5 - Math.random());
+    activeQuestions = shuffled.slice(0, 5);
+}
+
+function loadExamQuestion() {
+    let qData = activeQuestions[currentExamIndex];
+    if (!qData) return;
+    
+    const badge = document.getElementById('paper-difficulty');
+    badge.innerText = `${currentExamIndex + 1}번 미션 (+${qData.cash.toLocaleString()}원)`;
+    document.getElementById('paper-question').innerText = qData.q;
+    
+    const optionsContainer = document.getElementById('paper-options');
+    optionsContainer.innerHTML = "";
+    
+    // 보기를 셔플하여 정답 위치를 랜덤하게 배치
+    const correctText = qData.options[qData.answer];
+    const indexed = qData.options.map((opt, idx) => ({ opt, idx }));
+    for (let i = indexed.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indexed[i], indexed[j]] = [indexed[j], indexed[i]];
+    }
+    const prefixes = ["① ", "② ", "③ ", "④ "];
+    indexed.forEach((item, newIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        // 기존 번호 접두사(①②③) 제거 후 새 번호 붙이기
+        const cleanText = item.opt.replace(/^[①②③④]\s*/, '');
+        btn.innerText = prefixes[newIdx] + cleanText;
+        const isCorrect = (item.opt === correctText);
+        btn.onclick = () => {
+            ensureBGMStarts(); 
+            playSound('click');
+            checkExamAnswer(isCorrect ? qData.answer : -1, isCorrect);
+        };
+        optionsContainer.appendChild(btn);
+    });
+}
+
+function checkExamAnswer(selectedIdx, isCorrect) {
+    let qData = activeQuestions[currentExamIndex];
+    if (isCorrect) {
+        playSound('correct');
+        userMoney += qData.cash;
+        updateStatusUI();
+        currentExamIndex++;
+        
+        if (userMoney >= 100000) {
+            showAlert(`🎯 정답입니다! 기부금액이 충전되었습니다.\n(+${qData.cash.toLocaleString()}원)\n\n✨ 자금 10만 원 전액 충전 완료! 자금이 마련되어 2단계 지역 탐색 화면으로 자동 이동합니다.`, () => {
+                goToSpecificStep(2);
+            });
+        } else {
+            showAlert(`🎯 정답입니다! 기부금액이 충전되었습니다.\n(+${qData.cash.toLocaleString()}원)`, () => {
+                loadExamQuestion();
+            });
+        }
+    } else {
+        playSound('wrong');
+        showAlert('❌ 오답입니다! 문제를 다시 한 번 신중하게 읽고 정답을 골라보세요.');
+    }
+}
+
+function updateStatusUI() {
+    document.getElementById('user-money').innerText = userMoney.toLocaleString();
+    document.getElementById('saved-count').innerText = savedCount;
+    let percentage = Math.min((userMoney / 100000) * 100, 100);
+    document.getElementById('money-bar').style.width = percentage + "%";
+    document.getElementById('bar-text').innerText = `기부 목표 자금 달성도: ${percentage.toFixed(0)}%`;
+}
+
+function goToSpecificStep(stepNum) {
+    playSound('click');
+    ensureBGMStarts();
+    document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    
+    document.getElementById(`step${stepNum}-indicator`).classList.add('active');
+    
+    if (stepNum === 1) {
+        document.getElementById('screen-earn-money').classList.add('active');
+    } else if (stepNum === 2) {
+        renderRegionCards();
+        document.getElementById('story-display-box').classList.remove('active');
+        document.getElementById('screen-select-region').classList.add('active');
+    } else if (stepNum === 3) {
+        if(!currentRegionKey) {
+            showAlert("⚠️ 기부할 지역이 아직 선택되지 않았습니다. 2단계에서 지자체를 먼저 선택해 주세요.", () => goToSpecificStep(2));
+            return;
+        }
+        document.getElementById('intent-region-name').innerText = regionData[currentRegionKey].name;
+        document.getElementById('intent-user-balance').innerText = userMoney.toLocaleString();
+        document.getElementById('screen-donate-intent').classList.add('active');
+    } else if (stepNum === 4) {
+        if(!currentRegionKey || userMoney < 100000) {
+            showAlert("⚠️ 비정상적인 접근입니다. 자금이 부족하거나 지역이 지정되지 않았습니다.", () => goToSpecificStep(1));
+            return;
+        }
+        startShopMode(currentRegionKey);
+        document.getElementById('screen-shop-and-end').classList.add('active');
+    }
+}
+
+function renderRegionCards() {
+    const list = document.getElementById('region-list');
+    list.innerHTML = "";
+    Object.keys(regionData).forEach(key => {
+        const r = regionData[key];
+        const card = document.createElement('div');
+        card.className = "region-card";
+        if(currentRegionKey === key) card.style.borderColor = "#3498db";
+        card.innerHTML = `
+            <div class="region-emoji">${r.emoji}</div>
+            <div style="font-weight:bold; font-size:1.05rem;">${r.name}</div>
+            <div style="font-size:0.75rem; color:#7f8c8d; margin-top:5px; background:#f2f4f4; padding:3px; border-radius:4px;">🔍 어려움 보기</div>
+        `;
+        card.onclick = () => {
+            playSound('click');
+            showRegionStory(key);
+        };
+        list.appendChild(card);
+    });
+}
+
+function showRegionStory(key) {
+    currentRegionKey = key;
+    renderRegionCards();
+    const r = regionData[key];
+    document.getElementById('story-emoji').innerText = r.emoji;
+    document.getElementById('story-region-name').innerText = r.name;
+    document.getElementById('story-text').innerText = r.story;
+    
+    const box = document.getElementById('story-display-box');
+    box.classList.add('active');
+    box.scrollIntoView({ behavior: 'smooth' });
+}
+
+function proceedToIntentWithSelected() {
+    if(!currentRegionKey) {
+        showAlert("지역을 고른 후 매칭 버튼을 눌러주세요.");
+        return;
+    }
+    goToSpecificStep(3);
+}
+
+function confirmDonationIntent() {
+    const nameVal = document.getElementById('user-name-input').value.trim();
+    if(!nameVal) {
+        showAlert("⚠️ 서류 제출자(기부자 명의)의 성함을 반드시 입력해 주세요!", () => {
+            document.getElementById('user-name-input').focus();
+        });
+        return;
+    }
+    if (userMoney < 100000) {
+        showAlert("⚠️ 자금이 부족합니다. 1단계 탭으로 돌아가 퀴즈를 풀어 자금을 10만 원 이상 모아주세요!", () => goToSpecificStep(1));
+        return;
+    }
+    
+    savedCount = 1;
+    updateStatusUI();
+    
+    playSound('success');
+    goToSpecificStep(4);
+}
+
+function startShopMode(regionKey) {
+    currentRegionKey = regionKey;
+    const r = regionData[regionKey];
+    document.getElementById('shop-region-title').innerText = `🎁 4단계: ${r.name} 특산품 답례품 선택 (정확히 30,000 P 채우기)`;
+    
+    if(Object.keys(cart).length === 0 || !cart._region || cart._region !== regionKey) {
+        cart = {_region: regionKey};
+        totalSpentPoints = 0;
+    }
+    updateCartUI();
+    
+    const shopContainer = document.getElementById('shop-items');
+    shopContainer.innerHTML = "";
+    r.items.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+            <div class="item-emoji-large">${item.i}</div>
+            <div style="font-weight:bold; margin:2px 0; font-size:0.9rem; height:35px; display:flex; align-items:center; justify-content:center; line-height:1.2;">${item.name}</div>
+            <div style="color:#27ae60; font-weight:bold; font-size:0.95rem;">${item.p.toLocaleString()} P</div>
+            <div style="font-size:0.75rem; color:#95a5a6; margin-top:4px;">🛒 담기</div>
+        `;
+        card.onclick = () => {
+            playSound('click');
+            addToCart(index, item.p);
+        };
+        shopContainer.appendChild(card);
+    });
+}
+
+function addToCart(index, price) {
+    if (totalSpentPoints + price > 30000) {
+        showAlert("⚠️ 지급된 보상 한도(30,000P)를 초과하여 바구니에 담을 수 없습니다.");
+        return;
+    }
+    cart[index] = (cart[index] || 0) + 1;
+    totalSpentPoints += price;
+    updateCartUI();
+}
+
+function removeFromCart(index, price) {
+    playSound('click');
+    if (cart[index] > 0) {
+        cart[index]--;
+        totalSpentPoints -= price;
+        if (cart[index] === 0) delete cart[index];
+        updateCartUI();
+    }
+}
+
+function updateCartUI() {
+    document.getElementById('selected-price').innerText = totalSpentPoints.toLocaleString();
+    const notice = document.getElementById('cart-notice-msg');
+    if(totalSpentPoints === 30000) {
+        notice.innerText = "✨ 30,000 P가 모두 채워졌습니다! 사진 등록 후 하단 완료 버튼을 누르실 수 있습니다.";
+        notice.style.color = "#2ecc71";
+    } else {
+        notice.innerText = `⚠️ 아직 다 채워지지 않았어요. (부족금액: ${(30000 - totalSpentPoints).toLocaleString()} P)`;
+        notice.style.color = "#e74c3c";
+    }
+    
+    const container = document.getElementById('cart-list-container');
+    container.innerHTML = "";
+    
+    const r = regionData[currentRegionKey];
+    let hasItems = false;
+    
+    Object.keys(cart).forEach(key => {
+        if(key === "_region") return;
+        hasItems = true;
+        const itemIdx = parseInt(key);
+        const count = cart[key];
+        const item = r.items[itemIdx];
+        
+        const div = document.createElement('div');
+        div.className = "cart-item";
+        div.innerHTML = `
+            <span>${item.i} ${item.name} (<b>${count}개</b>)</span>
+            <span>${(item.p * count).toLocaleString()}P <button class="btn-minus" onclick="removeFromCart(${itemIdx}, ${item.p})">✖</button></span>
+        `;
+        container.appendChild(div);
+    });
+    
+    if(!hasItems) {
+        container.innerHTML = `<p style="text-align:center; color:#95a5a6; font-size:0.85rem; margin:20px 0;">장바구니가 비어 있습니다.<br>왼쪽 특산품 리스트를 눌러 담아보세요!</p>`;
+    }
+}
+
+let localStream = null;
+function selectPhotoMethod(method) {
+    playSound('click');
+    document.getElementById('area-camera').classList.remove('active');
+    document.getElementById('area-draw').classList.remove('active');
+    
+    if(method === 'camera') {
+        document.getElementById('area-camera').classList.add('active');
+        stopCamera();
+        navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 }, audio: false })
+            .then(stream => {
+                localStream = stream;
+                const video = document.getElementById('camera-video');
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                showAlert("카메라 연결 실패! 브라우저 권한을 허용해주시거나, 손그림 디자인 도구를 사용해 주세요!");
+            });
+    } else if(method === 'draw') {
+        document.getElementById('area-draw').classList.add('active');
+        stopCamera();
+        initCanvas();
+    }
+}
+
+function stopCamera() {
+    if (localStream) {
+        localStream.getTracks().forEach(t => t.stop());
+        localStream = null;
+    }
+}
+
+function takeSnapshot() {
+    playSound('success');
+    const video = document.getElementById('camera-video');
+    if(!localStream) return;
+    
+    const canvasTmp = document.createElement('canvas');
+    // 카메라 원본 해상도 그대로 사용 (비율 유지)
+    canvasTmp.width = video.videoWidth || video.clientWidth;
+    canvasTmp.height = video.videoHeight || video.clientHeight;
+    const ctxTmp = canvasTmp.getContext('2d');
+    
+    // 좌우 반전 (미러 효과 해제 - 찍힌 그대로)
+    ctxTmp.translate(canvasTmp.width, 0);
+    ctxTmp.scale(-1, 1);
+    ctxTmp.drawImage(video, 0, 0, canvasTmp.width, canvasTmp.height);
+    
+    userFinalPhotoData = canvasTmp.toDataURL('image/png');
+    renderPreview(userFinalPhotoData, 'camera');
+    stopCamera();
+    document.getElementById('area-camera').classList.remove('active');
+}
+
+function retakePhoto() {
+    playSound('click');
+    userFinalPhotoData = null;
+    document.getElementById('photo-preview-container').style.display = 'none';
+    document.getElementById('preview-crop-box').innerHTML = '';
+    document.getElementById('btn-retake-photo').style.display = 'none';
+    selectPhotoMethod('camera');
+}
+
+function changeColor(colorHex, element) {
+    playSound('click');
+    currentPenColor = colorHex;
+    document.querySelectorAll('.color-dot').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+    setDrawMode('draw');
+}
+
+function changeSize(sizeNumber, element) {
+    playSound('click');
+    currentPenSize = sizeNumber;
+    document.querySelectorAll('.size-btn').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+}
+
+function setDrawMode(mode) {
+    playSound('click');
+    drawingMode = mode;
+    document.getElementById('draw-mode-btn').classList.remove('active');
+    document.getElementById('erase-mode-btn').classList.remove('active');
+    
+    if(mode === 'draw') {
+        document.getElementById('draw-mode-btn').classList.add('active');
+    } else {
+        document.getElementById('erase-mode-btn').classList.add('active');
+    }
+}
+
+function saveCanvasState() {
+    if (canvasHistory.length >= 30) {
+        canvasHistory.shift(); 
+    }
+    canvasHistory.push(canvas.toDataURL());
+}
+
+function undoCanvas() {
+    playSound('click');
+    if (canvasHistory.length > 0) {
+        let lastState = canvasHistory.pop();
+        let img = new Image();
+        img.src = lastState;
+        img.onload = function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+        }
+    } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+function initCanvas() {
+    canvas = document.getElementById('draw-canvas');
+    if(!canvas) return;
+    ctx = canvas.getContext('2d');
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    canvas.onmousedown = function(e) {
+        saveCanvasState(); 
+        isDrawing = true;
+        ctx.beginPath();
+        ctx.moveTo(e.offsetX, e.offsetY);
+        ctx.strokeStyle = (drawingMode === 'erase') ? '#ffffff' : currentPenColor;
+        ctx.lineWidth = currentPenSize;
+    };
+    canvas.onmousemove = function(e) {
+        if(isDrawing) {
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        }
+    };
+    canvas.onmouseup = function() { isDrawing = false; };
+    canvas.onmouseleave = function() { isDrawing = false; };
+    
+    canvas.ontouchstart = function(e) {
+        saveCanvasState();
+        isDrawing = true;
+        e.preventDefault();
+        const r = canvas.getBoundingClientRect();
+        ctx.beginPath();
+        ctx.moveTo(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
+        ctx.strokeStyle = (drawingMode === 'erase') ? '#ffffff' : currentPenColor;
+        ctx.lineWidth = currentPenSize;
+    };
+    canvas.ontouchmove = function(e) {
+        if(!isDrawing) return;
+        e.preventDefault();
+        const r = canvas.getBoundingClientRect();
+        ctx.lineTo(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
+        ctx.stroke();
+    };
+    canvas.ontouchend = function() { isDrawing = false; };
+}
+
+function clearCanvas() {
+    playSound('click');
+    showConfirm("그리던 내용을 전부 초기화할까요?", () => {
+        saveCanvasState();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+}
+
+function saveDraw() {
+    playSound('success');
+    userFinalPhotoData = canvas.toDataURL('image/png');
+    renderPreview(userFinalPhotoData, 'draw');
+    document.getElementById('area-draw').classList.remove('active');
+}
+
+function renderPreview(dataUrl, source) {
+    const box = document.getElementById('preview-crop-box');
+    box.innerHTML = `<img src="${dataUrl}" style="width:100%; height:100%; object-fit:contain;">`;
+    document.getElementById('photo-preview-container').style.display = 'block';
+    const retakeBtn = document.getElementById('btn-retake-photo');
+    if(source === 'camera') {
+        retakeBtn.style.display = 'block';
+    } else {
+        retakeBtn.style.display = 'none';
+    }
+}
+
+function completeDonationFlow() {
+    if(totalSpentPoints !== 30000) {
+        showAlert("⚠️ 주민들이 정성껏 보낸 답례품 한도 포인트를(정확히 30,000P) 모두 써서 카트를 꽉 채워주셔야 행정 처리가 완료됩니다!");
+        return;
+    }
+    if(!userFinalPhotoData) {
+        showAlert("⚠️ 증서에 탑재될 기부천사 본인의 사진이나 손그림 디자인 인증샷이 누락되었습니다. 카메라 촬영 혹은 디자인 완성 버튼을 눌러주세요!");
+        return;
+    }
+    
+    playSound('success');
+    stopCamera();
+    
+    userMoney -= 100000;
+    
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-ending').classList.add('active');
+    
+    const r = regionData[currentRegionKey];
+    const finalUserName = document.getElementById('user-name-input').value.trim() || "익명";
+    
+    document.getElementById('gfx-before').innerText = r.gfxB;
+    document.getElementById('gfx-after').innerText = r.gfxA;
+    document.getElementById('txt-before').innerHTML = `농촌 소멸 지수 경보 단계 발령, 복지 사각지대 증가, 기초 인프라 소멸 위기 상태였습니다.`;
+    document.getElementById('txt-after').innerHTML = `기탁해 주신 세원으로 <strong>[${r.project}]</strong> 공익 사업이 즉각 궤도에 올라 활기찬 마을로 부활을 시작합니다!`;
+    
+    document.getElementById('cert-user-name').innerText = finalUserName;
+    document.getElementById('cert-region-target').innerText = r.name;
+    document.getElementById('cert-official-title').innerText = `${r.name.split(' ').pop()}군수`;
+    document.getElementById('cert-seal-text').innerText = `${r.name.split(' ').pop().substring(0,2)}인`;
+    
+    const today = new Date();
+    document.getElementById('cert-issue-date').innerText = `${today.getFullYear()}년 ${(today.getMonth()+1).toString().padStart(2,'0')}월 ${today.getDate().toString().padStart(2,'0')}일`;
+    
+    const finalItems = [];
+    Object.keys(cart).forEach(key => {
+        if(key==="_region") return;
+        finalItems.push(r.items[parseInt(key)].name + " " + cart[key] + "개");
+    });
+    
+    document.getElementById('cert-gift-items').innerText = finalItems.join(', ');
+    
+    const photoArea = document.getElementById('cert-final-photo-area');
+    photoArea.innerHTML = `<img src="${userFinalPhotoData}">`;
+    
+    // 도감 누적 업데이트
+    Object.keys(cart).forEach(key => {
+        if(key === "_region") return;
+        const dexKey = `${currentRegionKey}_${key}`;
+        dexCollection[dexKey] = (dexCollection[dexKey] || 0) + cart[key];
+    });
+    
+    renderDex(currentRegionKey, cart);
+    
+    document.getElementById('ending-message').innerHTML = `
+        <strong>🏆 수호 매칭 고향:</strong> ${r.name}<br>
+        <strong>💝 최종 기부자:</strong> ${finalUserName} 기부천사님<br>
+        <strong>💝 최종 기부액:</strong> 100,000원 (전액 세액 환급 대상)<br>
+        <strong>📦 집으로 배송될 지역 특산품:</strong> ${finalItems.join(', ')}<br><br>
+        ✨ <strong>투명한 기부금 집행 핵심 공익 사업:</strong><br>
+        이 소중한 자금은 ${r.name}의 지속 가능한 발전을 위한 <mark><strong>${r.project}</strong></mark> 사업의 핵심 재원으로 100% 투명하게 집행됩니다.
+    `;
+    
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-ending').classList.add('active');
+}
+
+function downloadCertificateImage() {
+    playSound('success');
+    const target = document.getElementById('print-certificate-target');
+    
+    html2canvas(target, {
+        useCORS: true,
+        scale: 2, 
+        backgroundColor: "#fffcf5"
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `고향사랑기부증서_${document.getElementById('cert-region-target').innerText}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }).catch(err => {
+        showAlert("이미지 저장 중 오류가 발생했습니다. 브라우저 권한을 확인해 주세요.");
+    });
+}
+
+function renderDex(thisRegionKey, thisCart) {
+    renderDexThisRun(thisRegionKey, thisCart);
+    renderDexAll();
+    // 탭 초기화
+    document.querySelectorAll('.dex-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.dex-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('[onclick="switchDexTab(\'this-run\', this)"]').classList.add('active');
+    document.getElementById('dex-panel-this-run').classList.add('active');
+}
+
+function switchDexTab(tab, el) {
+    document.querySelectorAll('.dex-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.dex-panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('dex-panel-' + tab).classList.add('active');
+}
+
+function renderDexThisRun(regionKey, cart) {
+    const r = regionData[regionKey];
+    const panel = document.getElementById('dex-panel-this-run');
+
+    // 총 아이템 수, 획득 수
+    const total = r.items.length;
+    const obtained = Object.keys(cart).filter(k => k !== '_region').length;
+    const pct = Math.round((obtained / total) * 100);
+
+    let html = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span style="color:#f1c40f; font-weight:bold;">${r.emoji} ${r.name}</span>
+            <span style="color:#94a3b8; font-size:0.82rem;">${obtained} / ${total} 종류 획득</span>
+        </div>
+        <div class="dex-progress-bar-wrap">
+            <div class="dex-progress-bar-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="dex-progress-text">${pct}% 수집 완료</div>
+        <div class="dex-grid">
+    `;
+
+    r.items.forEach((item, idx) => {
+        const cartKey = String(idx);
+        const count = cart[cartKey] || 0;
+        const isNew = count > 0;
+        html += `
+            <div class="dex-card ${isNew ? 'obtained' : 'locked'}">
+                ${isNew ? `<span class="dex-card-new">NEW</span>` : ''}
+                ${count > 1 ? `<span class="dex-card-count">×${count}</span>` : ''}
+                ${isNew
+                    ? `<span class="dex-card-emoji">${item.i}</span><div class="dex-card-name">${item.name}</div>`
+                    : `<span class="dex-lock-icon">🔒</span><div class="dex-card-name" style="color:#334155">???</div>`
+                }
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    panel.innerHTML = html;
+}
+
+function renderDexAll() {
+    const panel = document.getElementById('dex-panel-all');
+
+    // 전체 아이템 수 계산
+    let totalAll = 0, obtainedAll = 0;
+    Object.keys(regionData).forEach(rk => { totalAll += regionData[rk].items.length; });
+    Object.keys(dexCollection).forEach(k => { if(dexCollection[k] > 0) obtainedAll++; });
+    const pct = totalAll > 0 ? Math.round((obtainedAll / totalAll) * 100) : 0;
+
+    let html = `
+        <div class="dex-progress-bar-wrap">
+            <div class="dex-progress-bar-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="dex-progress-text">전체 ${obtainedAll} / ${totalAll} 종류 수집 (${pct}%)</div>
+    `;
+
+    Object.keys(regionData).forEach(rk => {
+        const r = regionData[rk];
+        const regionObtained = r.items.filter((_, idx) => dexCollection[`${rk}_${idx}`] > 0).length;
+        if(regionObtained === 0) return; // 한 번도 기부 안 한 지역은 숨김
+
+        html += `<div class="dex-region-label">${r.emoji} ${r.name} (${regionObtained}/${r.items.length})</div><div class="dex-grid">`;
+        r.items.forEach((item, idx) => {
+            const count = dexCollection[`${rk}_${idx}`] || 0;
+            html += `
+                <div class="dex-card ${count > 0 ? 'obtained' : 'locked'}">
+                    ${count > 1 ? `<span class="dex-card-count">×${count}</span>` : ''}
+                    ${count > 0
+                        ? `<span class="dex-card-emoji">${item.i}</span><div class="dex-card-name">${item.name}</div>`
+                        : `<span class="dex-lock-icon">🔒</span><div class="dex-card-name" style="color:#334155">???</div>`
+                    }
+                </div>
+            `;
+        });
+        html += `</div>`;
+    });
+
+    if(obtainedAll === 0) {
+        html += `<div style="text-align:center; color:#475569; padding: 30px 0;">아직 수집된 답례품이 없습니다.</div>`;
+    }
+
+    panel.innerHTML = html;
+}
+
+function restartToGameInit() {
+    playSound('click');
+    userMoney = 0;
+    savedCount = 0;
+    currentExamIndex = 0;
+    currentRegionKey = "";
+    cart = {};
+    totalSpentPoints = 0;
+    userFinalPhotoData = null;
+    canvasHistory = []; 
+    
+    document.getElementById('user-name-input').value = "";
+    document.getElementById('photo-preview-container').style.display = 'none';
+    document.getElementById('preview-crop-box').innerHTML = "";
+    document.getElementById('btn-retake-photo').style.display = 'none';
+    
+    updateStatusUI();
+    generateRandomExamSet(); 
+    loadExamQuestion();
+    
+    document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('step1-indicator').classList.add('active');
+    
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-earn-money').classList.add('active');
+}
+</script>
+
+</body>
+</html>
